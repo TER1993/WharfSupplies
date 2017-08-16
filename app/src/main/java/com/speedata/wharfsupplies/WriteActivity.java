@@ -158,7 +158,112 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
                 .setNegativeButton("取消", dialogButtonOnClickListener)
                 .show();
         mPosition = position;
-        tvTxt.append(message.toString());
+        String show = showResult(message);
+        tvTxt.append(show);
+    }
+
+    private String showResult(BaseInfor message) {
+        String result = "";
+        List<BaseInfor> list = new ArrayList<>();
+        list = baseInforDao.imQueryList();
+        BaseInfor baseInfor = list.get(0);
+
+        Log.d(TAG, "数据库0位置数据" + baseInfor.toString());
+        for (int i = 0; i < 18; i++) {
+            result += quzhi(i, baseInfor) + " : " + quzhi(i, message) + "\n";
+        }
+
+        return result;
+    }
+
+    private String quzhi(int i, BaseInfor baseInfor) {
+        String quzhi = "";
+        switch (i) {
+            case 0:
+                quzhi = baseInfor.getNO();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 1:
+                quzhi = baseInfor.getPKGNO();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 2:
+                quzhi = baseInfor.getDescriptionCN();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 3:
+                quzhi = baseInfor.getDescriptionEN();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 4:
+                quzhi = baseInfor.getPCS();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 5:
+                quzhi = baseInfor.getPKGWAY();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 6:
+                quzhi = baseInfor.getGW();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 7:
+                quzhi = baseInfor.getNW();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 8:
+                quzhi = baseInfor.getL();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 9:
+                quzhi = baseInfor.getW();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 10:
+                quzhi = baseInfor.getH();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 11:
+                quzhi = baseInfor.getVOL();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 12:
+                quzhi = baseInfor.getPONO();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 13:
+                quzhi = baseInfor.getOrigin();
+                if (quzhi != null) {
+                    quzhi = quzhi.replaceAll("\n", "");
+                }
+                break;
+            case 14:
+                quzhi = baseInfor.getSupplier();
+                if (quzhi != null) {
+                    quzhi = quzhi.replaceAll("\n", "");
+                }
+                break;
+            case 15:
+                quzhi = baseInfor.getHSCODE();
+                if (quzhi != null) {
+                    quzhi = quzhi.replaceAll("\n", "");
+                }
+                break;
+            case 16:
+                quzhi = baseInfor.getTotalPrice();
+                if (quzhi != null) {
+                    quzhi = quzhi.replaceAll("\n", "");
+                }
+                break;
+            case 17:
+                quzhi = baseInfor.getCurrency();
+                if (quzhi != null) {
+                    quzhi = quzhi.replaceAll("\n", "");
+                }
+                break;
+
+        }
+        return quzhi;
     }
 
     @Override
@@ -266,9 +371,7 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
         public void onClick(DialogInterface dialog, int which) {
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE: // 确定
-
                     // TODO: 2017/8/15 点击确定向已选择卡片user区写入数据
-
 
 
                     break;

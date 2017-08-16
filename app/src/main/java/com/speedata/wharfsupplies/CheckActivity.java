@@ -159,7 +159,7 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
             
             case R.id.btn_check:
 
-                // TODO: 2017/8/16 开始盘点 
+                // TODO: 2017/8/16 开始盘点
                 
                 break;
         }
@@ -168,8 +168,8 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
     private void outPutFile() {
             // TODO: 2017/8/14 拿到盘点结果的list，创建导出盘点excel
             
-        
-        
+
+
         try {
 
             MainActivity.scanFile(CheckActivity.this, createFilename());
