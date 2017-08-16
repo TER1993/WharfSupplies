@@ -8,9 +8,6 @@ import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -29,10 +26,10 @@ import com.speedata.libuhf.bean.Tag_Data;
 import com.speedata.libutils.DataConversionUtils;
 import com.speedata.wharfsupplies.adapter.CheckAdapter;
 import com.speedata.wharfsupplies.db.bean.BaseInfor;
-import com.speedata.wharfsupplies.dialog.SearchTagDialog;
 import com.speedata.wharfsupplies.utils.MyDateAndTime;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +64,7 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
     private Handler handler = null;
     private ArrayAdapter<EpcDataBase> adapter;
     private TextView Status;
+    private boolean IsUtf8 = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,12 +134,29 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
                             }
                         }
                         if (j == firm.size()) {
-                            if (TextUtils.isEmpty(ks.get(i).epc)){
+                            if (TextUtils.isEmpty(ks.get(i).epc)) {
                                 break;
                             }
                             String tid = ks.get(i).tid;
                             byte[] toByteArray = DataConversionUtils.hexStringToByteArray(tid);
-                            String user = new String(toByteArray);
+
+                            String user = "";
+                            // 为处理结果中，中文显示乱码而修改。
+                            if (isUTF8(toByteArray)) {
+                                try {
+                                    user = new String(toByteArray, "utf8");
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                try {
+                                    user = new String(toByteArray, "gbk");
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        //    String user = new String(toByteArray);
                             firm.add(new EpcDataBase(ks.get(i).epc, 1,
                                     ks.get(i).rssi,user));
                             if (cbb.isChecked()) {
@@ -159,6 +174,46 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
         };
 
     }
+
+
+    //判断扫描的内容是否是UTF8的中文内容
+    private boolean isUTF8(byte[] sx) {
+        //Log.d(TAG, "begian to set codeset");
+        for (int i = 0; i < sx.length; ) {
+            if (sx[i] < 0) {
+                if ((sx[i] >>> 5) == 0x7FFFFFE) {
+                    if (((i + 1) < sx.length) && ((sx[i + 1] >>> 6) == 0x3FFFFFE)) {
+                        i = i + 2;
+                        IsUtf8 = true;
+                    } else {
+                        if (IsUtf8)
+                            return true;
+                        else
+                            return false;
+                    }
+                } else if ((sx[i] >>> 4) == 0xFFFFFFE) {
+                    if (((i + 2) < sx.length) && ((sx[i + 1] >>> 6) == 0x3FFFFFE) && ((sx[i + 2] >>> 6) == 0x3FFFFFE)) {
+                        i = i + 3;
+                        IsUtf8 = true;
+                    } else {
+                        if (IsUtf8)
+                            return true;
+                        else
+                            return false;
+                    }
+                } else {
+                    if (IsUtf8)
+                        return true;
+                    else
+                        return false;
+                }
+            } else {
+                i++;
+            }
+        }
+        return true;
+    }
+
 
     @Override
     protected void onStop() {
