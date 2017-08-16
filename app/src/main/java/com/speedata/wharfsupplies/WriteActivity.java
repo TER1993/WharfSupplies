@@ -311,7 +311,6 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_choose_card:
-                // TODO: 2017/8/16 选择卡片
 
                 //盘点选卡
                 SearchTagDialog searchTag = new SearchTagDialog(this, iuhfService);
@@ -394,7 +393,7 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE: // 确定
 
-                    // TODO: 2017/8/15 点击确定向已选择卡片user区写入数据
+                    // TODO: 2017/8/15 目前的写入失败，原因是长度不支持，张明联系厂家了
                     if ((msg.length() % 2) != 0) {
                         msg = msg + " ";
                     }

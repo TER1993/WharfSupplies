@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.speedata.libuhf.bean.Tag_Data;
 import com.speedata.libutils.DataConversionUtils;
+import com.speedata.libutils.excel.ExcelUtils;
 import com.speedata.wharfsupplies.adapter.CheckAdapter;
 import com.speedata.wharfsupplies.db.bean.BaseInfor;
 import com.speedata.wharfsupplies.utils.MyDateAndTime;
@@ -33,9 +34,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import jxl.format.Colour;
 import win.reginer.adapter.CommonRvAdapter;
 
 import static com.speedata.utils.ToolCommon.isNumeric;
+import static com.speedata.wharfsupplies.MainActivity.scanFile;
 import static com.speedata.wharfsupplies.application.CustomerApplication.iuhfService;
 
 public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChildClickListener, View.OnClickListener {
@@ -45,6 +48,7 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
     //单件扫描不计数，不允许重复
 
     private List<BaseInfor> mList;
+    private BaseInfor baseInfor;
     private CheckAdapter mAdapter;
     private Button btnSave;
     private Button btnCheck;
@@ -90,7 +94,7 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
 
 
     private void initView() {
-
+        baseInfor = new BaseInfor();
         mList = new ArrayList<>();
         btnSave = (Button) findViewById(R.id.btn_save_xls);
         btnSave.setOnClickListener(this);
@@ -294,8 +298,7 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
                 break;
             
             case R.id.btn_check:
-
-                // TODO: 2017/8/16 开始盘点 
+                //开始盘点
                 if (inSearch) {
                     inSearch = false;
                     int inventoryStop = iuhfService.inventory_stop();
@@ -315,17 +318,112 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
 
     private void outPutFile() {
             // TODO: 2017/8/14 拿到盘点结果的list，创建导出盘点excel
-            
-        
-        
+            List<BaseInfor> list = getBaseList(firm);
+
+        if (list.size() == 0) {
+            Toast.makeText(this, "当前没有数据，请添加数据", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ExcelUtils.getInstance()
+                .setSHEET_NAME("sheet1")
+                .setFONT_COLOR(Colour.BLACK)
+                .setFONT_TIMES(8)
+                .setFONT_BOLD(false)
+                .setBACKGROND_COLOR(Colour.WHITE)
+                .setContent_list_Strings(list)
+                .createExcel(this);
+
+        Log.d("excel", list.toString());
+        scanFile(this, "/sdcard/WharfSupplies/export/pandian.xls");
+
         try {
 
-            MainActivity.scanFile(CheckActivity.this, createFilename());
+            scanFile(CheckActivity.this, createFilename());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
+
+    private List<BaseInfor> getBaseList(List<EpcDataBase> firm) {
+
+        List<BaseInfor> list1 = new ArrayList<>();
+
+        for (int i = 0; i < firm.size(); i++) {
+            String a = firm.get(i).getTid_user();
+            String b[] = a.split("   ");
+            for (int j = 0; j < b.length; j++) {
+                fuzhi(b[j], j);
+            }
+            list1.add(baseInfor);
+        }
+        return list1;
+    }
+
+    private void fuzhi(String neirong, int diji) {
+        switch (diji) {
+            case 0:
+                baseInfor.setNO(neirong);
+                break;
+            case 1:
+                baseInfor.setPKGNO(neirong);
+                break;
+            case 2:
+                baseInfor.setDescriptionCN(neirong);
+                break;
+            case 3:
+                baseInfor.setDescriptionEN(neirong);
+                break;
+            case 4:
+                baseInfor.setPCS(neirong);
+                break;
+            case 5:
+                baseInfor.setPKGWAY(neirong);
+                break;
+            case 6:
+                baseInfor.setGW(neirong);
+                break;
+            case 7:
+                baseInfor.setNW(neirong);
+                break;
+            case 8:
+                baseInfor.setL(neirong);
+                break;
+            case 9:
+                baseInfor.setW(neirong);
+                break;
+            case 10:
+                baseInfor.setH(neirong);
+                break;
+            case 11:
+                baseInfor.setVOL(neirong);
+                break;
+            case 12:
+                baseInfor.setPONO(neirong);
+                break;
+            case 13:
+                baseInfor.setOrigin(neirong);
+                break;
+            case 14:
+                baseInfor.setSupplier(neirong);
+                break;
+            case 15:
+                baseInfor.setHSCODE(neirong);
+                break;
+            case 16:
+                baseInfor.setTotalPrice(neirong);
+                break;
+            case 17:
+                baseInfor.setCurrency(neirong);
+                break;
+        }
+
+    }
+
+
+
+
 
     //创建导出文件的名字
     public String createFilename() throws IOException {
@@ -412,6 +510,15 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
         String epc;
         int valid;
         String rssi;
+
+        public String getTid_user() {
+            return tid_user;
+        }
+
+        public void setTid_user(String tid_user) {
+            this.tid_user = tid_user;
+        }
+
         String tid_user;
 
         public EpcDataBase(String e, int v, String rssi, String tid_user) {
