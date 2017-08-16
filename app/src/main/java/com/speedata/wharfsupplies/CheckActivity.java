@@ -3,22 +3,33 @@ package com.speedata.wharfsupplies;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.speedata.libuhf.bean.Tag_Data;
+import com.speedata.libutils.DataConversionUtils;
 import com.speedata.wharfsupplies.adapter.CheckAdapter;
 import com.speedata.wharfsupplies.db.bean.BaseInfor;
+import com.speedata.wharfsupplies.dialog.SearchTagDialog;
 import com.speedata.wharfsupplies.utils.MyDateAndTime;
 
 import java.io.IOException;
@@ -28,6 +39,7 @@ import java.util.List;
 import win.reginer.adapter.CommonRvAdapter;
 
 import static com.speedata.utils.ToolCommon.isNumeric;
+import static com.speedata.wharfsupplies.application.CustomerApplication.iuhfService;
 
 public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChildClickListener, View.OnClickListener {
 
@@ -39,12 +51,22 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
     private CheckAdapter mAdapter;
     private Button btnSave;
     private Button btnCheck;
-
+    private ListView EpcList;
     //item控件点击显示
     private AlertDialog mDialogItem;
     private EditText etTxtInput; //控件弹出对话框上的输入框
     private int mPosition; //选择的dialog的item的position
     private android.support.v7.app.AlertDialog mExitDialog; //按退出时弹出对话框
+
+    private SoundPool soundPool;
+    private int soundId;
+    private long scant = 0;
+    private CheckBox cbb;
+    private boolean inSearch = false;
+    private List<EpcDataBase> firm = new ArrayList<EpcDataBase>();
+    private Handler handler = null;
+    private ArrayAdapter<EpcDataBase> adapter;
+    private TextView Status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +78,19 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
         initView();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (iuhfService.OpenDev() == 0) {
+            Toast.makeText(this, "上电成功", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "上电失败", Toast.LENGTH_SHORT).show();
+        }
+        iuhfService.SetInvMode(3, 0, 32);
+    }
+
+
+
     private void initView() {
 
         mList = new ArrayList<>();
@@ -63,22 +98,12 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
         btnSave.setOnClickListener(this);
         btnCheck = (Button) findViewById(R.id.btn_check);
         btnCheck.setOnClickListener(this);
-        
         mBarLeft.setOnClickListener(this);
-
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.rv_count_content);
-
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL)); //adapter横线
-
-        mAdapter = new CheckAdapter(this, R.layout.view_count_item_layout, mList);
-
-        mRecyclerView.setAdapter(mAdapter);
-
-        mAdapter.setOnItemChildClickListener(this);
-
-
+        EpcList = (ListView) findViewById(R.id.listView_search_epclist);
+        Status = (TextView) findViewById(R.id.textView_search_status);
+        cbb = (CheckBox) findViewById(R.id.checkBox_beep);
+        soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
+        soundId = soundPool.load("/system/media/audio/ui/VideoRecord.ogg", 0);
 
         // 创建退出时的对话框，此处根据需要显示的先后顺序决定按钮应该使用Neutral、Negative或Positive
         CheckActivity.DialogOutButtonOnClickListener dialogButtonOnClickListener = new CheckActivity.DialogOutButtonOnClickListener();
@@ -89,8 +114,64 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
                 .setNeutralButton(R.string.out_sure, dialogButtonOnClickListener)
                 .setPositiveButton(R.string.out_miss, dialogButtonOnClickListener)
                 .create();
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (msg.what == 1) {
+                    scant++;
+                    if (!cbb.isChecked()) {
+                        if (scant % 10 == 0) {
+                            soundPool.play(soundId, 1, 1, 0, 0, 1);
+                        }
+                    }
+                    ArrayList<Tag_Data> ks = (ArrayList<Tag_Data>) msg.obj;
+                    int i, j;
+                    for (i = 0; i < ks.size(); i++) {
+                        for (j = 0; j < firm.size(); j++) {
+                            if (ks.get(i).epc.equals(firm.get(j).epc)) {
+                                firm.get(j).valid++;
+                                firm.get(j).setRssi(ks.get(i).rssi);
+                                break;
+                            }
+                        }
+                        if (j == firm.size()) {
+                            if (TextUtils.isEmpty(ks.get(i).epc)){
+                                break;
+                            }
+                            String tid = ks.get(i).tid;
+                            byte[] toByteArray = DataConversionUtils.hexStringToByteArray(tid);
+                            String user = new String(toByteArray);
+                            firm.add(new EpcDataBase(ks.get(i).epc, 1,
+                                    ks.get(i).rssi,user));
+                            if (cbb.isChecked()) {
+                                soundPool.play(soundId, 1, 1, 0, 0, 1);
+                            }
+                        }
+                    }
+                }
+                adapter = new ArrayAdapter<EpcDataBase>(
+                        getApplicationContext(), android.R.layout.simple_list_item_1, firm);
+                EpcList.setAdapter(adapter);
+                Status.setText("Total: " + firm.size());
+
+            }
+        };
 
     }
+
+    @Override
+    protected void onStop() {
+        Log.w("stop", "im stopping");
+        if (inSearch) {
+            iuhfService.inventory_stop();
+            inSearch = false;
+        }
+        soundPool.release();
+        iuhfService.CloseDev();
+        super.onStop();
+    }
+
 
     private void initTitle() {
         setNavigation(1, getString(R.string.count_title));
@@ -160,7 +241,19 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
             case R.id.btn_check:
 
                 // TODO: 2017/8/16 开始盘点 
-                
+                if (inSearch) {
+                    inSearch = false;
+                    int inventoryStop = iuhfService.inventory_stop();
+                    if (inventoryStop != 0) {
+                        Toast.makeText(this, "停止失败", Toast.LENGTH_SHORT).show();
+                    }
+                    btnCheck.setText("开始");
+                } else {
+                    inSearch = true;
+                    scant = 0;
+                    iuhfService.inventory_start(handler);
+                    btnCheck.setText("停止");
+                }
                 break;
         }
     }
@@ -258,5 +351,40 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
             mAdapter.notifyDataSetChanged();
         }
 
+    }
+
+    class EpcDataBase {
+        String epc;
+        int valid;
+        String rssi;
+        String tid_user;
+
+        public EpcDataBase(String e, int v, String rssi, String tid_user) {
+            // TODO Auto-generated constructor stub
+            epc = e;
+            valid = v;
+            this.rssi = rssi;
+            this.tid_user = tid_user;
+        }
+
+        public String getRssi() {
+            return rssi;
+        }
+
+        public void setRssi(String rssi) {
+            this.rssi = rssi;
+        }
+
+        @Override
+        public String toString() {
+            if (TextUtils.isEmpty(tid_user)) {
+                return "EPC:" + epc + "\n"
+                        + "(" + "COUNT:" + valid + ")" + " RSSI:" + rssi+"\n";
+            } else {
+                return "EPC:" + epc + "\n"
+                        + "User:" + tid_user + "\n"
+                        + "(" + "COUNT:" + valid + ")" + " RSSI:" + rssi+"\n";
+            }
+        }
     }
 }

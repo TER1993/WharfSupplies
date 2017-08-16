@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,11 +28,14 @@ import com.speedata.wharfsupplies.adapter.WriteAdapter;
 import com.speedata.wharfsupplies.application.CustomerApplication;
 import com.speedata.wharfsupplies.db.bean.BaseInfor;
 import com.speedata.wharfsupplies.db.dao.BaseInforDao;
+import com.speedata.wharfsupplies.dialog.SearchTagDialog;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import win.reginer.adapter.CommonRvAdapter;
+
+import static com.speedata.wharfsupplies.application.CustomerApplication.iuhfService;
 
 public class WriteActivity extends Activity implements View.OnClickListener, CommonRvAdapter.OnItemClickListener {
 
@@ -46,7 +50,6 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
     private WriteAdapter mAdapter;
     private Button btnOne;
     private AlertDialog mExitDialog; //按退出时弹出对话框
-    private IUHFService iuhfService;
     private CustomerApplication application;
 
     //item控件点击显示
@@ -69,14 +72,16 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
         setContentView(R.layout.activity_write);
         initTitle();
         initView();
+    }
 
-        iuhfService = UHFManager.getUHFService(this);
+    @Override
+    protected void onResume() {
+        super.onResume();
         if (iuhfService.OpenDev() == 0) {
             Toast.makeText(this, "上电成功", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "上电失败", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     private void initView() {
@@ -97,7 +102,6 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
         mList = application.getList();
         mContext = WriteActivity.this;
         baseInforDao = new BaseInforDao(mContext);
-
 
 
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.rv_one_content);
@@ -129,6 +133,7 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
     private void initTitle() {
         setNavigation(1, getString(R.string.one_title));
     }
+
     /**
      * 这是导航
      *
@@ -149,7 +154,7 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
         BaseInfor message = mList.get(position);
         //item的解决方案按钮
 
-        DialogItemOnClickListener dialogButtonOnClickListener = new DialogItemOnClickListener();
+        DialogItemOnClickListener dialogButtonOnClickListener = new DialogItemOnClickListener(message.toString());
         tvTxt = new TextView(WriteActivity.this);
         mDialogItem = new android.app.AlertDialog.Builder(WriteActivity.this)
                 .setTitle("确认写入此信息？")
@@ -206,7 +211,10 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
             case R.id.btn_choose_card:
                 // TODO: 2017/8/16 选择卡片
 
-
+                //盘点选卡
+                SearchTagDialog searchTag = new SearchTagDialog(this, iuhfService);
+                searchTag.setTitle("选卡");
+                searchTag.show();
                 break;
             case R.id.iv_left:
                 finish();
@@ -252,24 +260,39 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onStop() {
+        super.onStop();
         iuhfService.CloseDev();
-        super.onDestroy();
     }
-
 
     /**
      * 问题退出时的对话框的按钮点击事件
      */
     private class DialogItemOnClickListener implements DialogInterface.OnClickListener {
+        private String msg;
+
+        public DialogItemOnClickListener(String msg) {
+//            this.msg = "测试BaseInfor{NO='1', PKGNO='PO-019-1/2', DescriptionCN='uuu}";
+            this.msg =msg;
+        }
+
         @Override
         public void onClick(DialogInterface dialog, int which) {
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE: // 确定
 
                     // TODO: 2017/8/15 点击确定向已选择卡片user区写入数据
-
-
+                    if ((msg.length() % 2) != 0) {
+                        msg=msg+" ";
+                    }
+                    byte[] bytes = msg.getBytes();
+                    int length = bytes.length;
+                    int writeArea = iuhfService.write_area(3, 0, "00000000", bytes);
+                    if (writeArea == 0) {
+                        Toast.makeText(application, "写入成功", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(application, "写入失败", Toast.LENGTH_SHORT).show();
+                    }
 
                     break;
                 case DialogInterface.BUTTON_NEGATIVE: // 取消

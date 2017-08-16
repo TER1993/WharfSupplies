@@ -1,7 +1,10 @@
 package com.speedata.wharfsupplies.application;
 
 import android.app.Application;
+import android.widget.Toast;
 
+import com.speedata.libuhf.IUHFService;
+import com.speedata.libuhf.UHFManager;
 import com.speedata.wharfsupplies.db.bean.BaseInfor;
 
 import java.util.List;
@@ -19,7 +22,18 @@ public class CustomerApplication extends Application {
     private String mID;
     private String pswd;
     private int changeuser = 1;
+    public static IUHFService iuhfService;
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        iuhfService = UHFManager.getUHFService(this);
+    }
 
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+    }
 
     public int getChangeuser() {
         return changeuser;
