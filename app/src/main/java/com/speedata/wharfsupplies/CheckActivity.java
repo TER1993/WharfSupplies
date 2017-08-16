@@ -37,7 +37,8 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
 
     private List<BaseInfor> mList;
     private CheckAdapter mAdapter;
-    private Button btnCount;
+    private Button btnSave;
+    private Button btnCheck;
 
     //item控件点击显示
     private AlertDialog mDialogItem;
@@ -58,8 +59,11 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
     private void initView() {
 
         mList = new ArrayList<>();
-        btnCount = (Button) findViewById(R.id.btn_count_save);
-        btnCount.setOnClickListener(this);
+        btnSave = (Button) findViewById(R.id.btn_save_xls);
+        btnSave.setOnClickListener(this);
+        btnCheck = (Button) findViewById(R.id.btn_check);
+        btnCheck.setOnClickListener(this);
+        
         mBarLeft.setOnClickListener(this);
 
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.rv_count_content);
@@ -144,7 +148,7 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_count_save:
+            case R.id.btn_save_xls:
                 //导出为txt文件，制作文件名
                 outPutFile();
 
@@ -152,12 +156,20 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
             case R.id.iv_left:
                 finish();
                 break;
+            
+            case R.id.btn_check:
+
+                // TODO: 2017/8/16 开始盘点 
+                
+                break;
         }
     }
 
     private void outPutFile() {
-            // TODO: 2017/8/14 创建导出盘点excel
-
+            // TODO: 2017/8/14 拿到盘点结果的list，创建导出盘点excel
+            
+        
+        
         try {
 
             MainActivity.scanFile(CheckActivity.this, createFilename());

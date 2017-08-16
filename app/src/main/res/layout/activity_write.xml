@@ -39,7 +39,7 @@
             android:layout_margin="5dp"
             android:background="@drawable/bg_click"
             android:id="@+id/btn_search"
-            android:text="选择要写入的卡片"
+            android:text="搜索"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="30dp" />
@@ -55,7 +55,7 @@
         android:layout_weight="1" />
 
     <Button
-        android:id="@+id/btn_one_save"
+        android:id="@+id/btn_choose_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp5"
@@ -64,7 +64,7 @@
         android:layout_marginBottom="@dimen/dp5"
         android:background="@drawable/bg_click"
         android:layout_gravity="bottom"
-        android:text="@string/save"
+        android:text="选择要写入的卡片"
         android:textColor="@android:color/white" />
 
 

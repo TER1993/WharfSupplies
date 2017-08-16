@@ -83,7 +83,7 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
         //输入法管理
         mimm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         mList = new ArrayList<>();
-        btnOne = (Button) findViewById(R.id.btn_one_save);
+        btnOne = (Button) findViewById(R.id.btn_choose_card);
 
         btnSearch = (Button) findViewById(R.id.btn_search);
         etInput = (EditText) findViewById(R.id.et_input);
@@ -203,8 +203,8 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_one_save:
-                //导出为txt文件，制作文件名
+            case R.id.btn_choose_card:
+                // TODO: 2017/8/16 选择卡片
 
 
                 break;
@@ -215,7 +215,8 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
             case R.id.btn_search:
                 String input = etInput.getText().toString();
                 if ("".equals(input)) {
-                    mList = baseInforDao.imQueryList();
+                    mList.clear();
+                    mList.addAll(baseInforDao.imQueryList());
                     mAdapter.notifyDataSetChanged();
                 } else {
                     search(input);
@@ -225,7 +226,7 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
         }
     }
 
-    // TODO: 2017/8/14 从数据库查找内容
+
     private void search(String input) {
         Log.d(TAG, "开始查询");
         List<BaseInfor> baseInfors = baseInforDao.imQueryList("DescriptionCN=?", new String[]{input});
@@ -236,16 +237,17 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
                 Toast.makeText(this, "没有搜索到匹配的结果，请确认搜索内容是否正确", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "没搜到英文");
             } else { //搜到匹配的英文结果
-
-                mList = baseInfors;
+                mList.clear();
+                mList.addAll(baseInfors);
                 Log.d(TAG, "搜到英文" + mList.toString());
             }
         } else { //搜到匹配的中文结果
-            mList = baseInfors;
+            mList.clear();
+            mList.addAll(baseInfors);
             Log.d(TAG, "搜到中文" + mList.toString());
         }
         Log.d(TAG, "结束查询");
-        //// TODO: 2017/8/15 虽然mlist变了，但是没有更新画面
+
         mAdapter.notifyDataSetChanged();
     }
 
@@ -265,7 +267,7 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE: // 确定
 
-                    // TODO: 2017/8/15 点击确定写入数据
+                    // TODO: 2017/8/15 点击确定向已选择卡片user区写入数据
 
 
 
