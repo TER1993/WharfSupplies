@@ -117,7 +117,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
 
                 Log.d("excel", mlist.toString());
-                scanFile(this, "/sdcard/WharfSupplies/export/test.xls");
+                scanFile(this, "/sdcard/testExcel.xls");
 
                 break;
         }
