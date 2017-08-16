@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,8 +21,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.speedata.libuhf.IUHFService;
-import com.speedata.libuhf.UHFManager;
 import com.speedata.wharfsupplies.adapter.WriteAdapter;
 import com.speedata.wharfsupplies.application.CustomerApplication;
 import com.speedata.wharfsupplies.db.bean.BaseInfor;
@@ -163,7 +160,112 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
                 .setNegativeButton("取消", dialogButtonOnClickListener)
                 .show();
         mPosition = position;
-        tvTxt.append(message.toString());
+        String show = showResult(message);
+        tvTxt.append(show);
+    }
+
+    private String showResult(BaseInfor message) {
+        String result = "";
+        List<BaseInfor> list = new ArrayList<>();
+        list = baseInforDao.imQueryList();
+        BaseInfor baseInfor = list.get(0);
+
+        Log.d(TAG, "数据库0位置数据" + baseInfor.toString());
+        for (int i = 0; i < 18; i++) {
+            result += quzhi(i, baseInfor) + " : " + quzhi(i, message) + "\n";
+        }
+
+        return result;
+    }
+
+    private String quzhi(int i, BaseInfor baseInfor) {
+        String quzhi = "";
+        switch (i) {
+            case 0:
+                quzhi = baseInfor.getNO();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 1:
+                quzhi = baseInfor.getPKGNO();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 2:
+                quzhi = baseInfor.getDescriptionCN();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 3:
+                quzhi = baseInfor.getDescriptionEN();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 4:
+                quzhi = baseInfor.getPCS();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 5:
+                quzhi = baseInfor.getPKGWAY();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 6:
+                quzhi = baseInfor.getGW();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 7:
+                quzhi = baseInfor.getNW();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 8:
+                quzhi = baseInfor.getL();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 9:
+                quzhi = baseInfor.getW();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 10:
+                quzhi = baseInfor.getH();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 11:
+                quzhi = baseInfor.getVOL();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 12:
+                quzhi = baseInfor.getPONO();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 13:
+                quzhi = baseInfor.getOrigin();
+                if (quzhi != null) {
+                    quzhi = quzhi.replaceAll("\n", "");
+                }
+                break;
+            case 14:
+                quzhi = baseInfor.getSupplier();
+                if (quzhi != null) {
+                    quzhi = quzhi.replaceAll("\n", "");
+                }
+                break;
+            case 15:
+                quzhi = baseInfor.getHSCODE();
+                if (quzhi != null) {
+                    quzhi = quzhi.replaceAll("\n", "");
+                }
+                break;
+            case 16:
+                quzhi = baseInfor.getTotalPrice();
+                if (quzhi != null) {
+                    quzhi = quzhi.replaceAll("\n", "");
+                }
+                break;
+            case 17:
+                quzhi = baseInfor.getCurrency();
+                if (quzhi != null) {
+                    quzhi = quzhi.replaceAll("\n", "");
+                }
+                break;
+
+        }
+        return quzhi;
     }
 
     @Override
@@ -272,8 +374,19 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
         private String msg;
 
         public DialogItemOnClickListener(String msg) {
-//            this.msg = "测试BaseInfor{NO='1', PKGNO='PO-019-1/2', DescriptionCN='uuu}";
-            this.msg =msg;
+            //处理一下要写的数据
+            BaseInfor baseInfor = mList.get(mPosition);
+            String result = "";
+            for (int i = 0; i < 18; i++) {
+                result += quzhi(i, baseInfor) + "   ";
+            }
+
+            Log.d(TAG, "result: " + result);
+
+            this.msg = msg;
+
+            Log.d(TAG, "msg: " + result);
+
         }
 
         @Override
@@ -283,7 +396,7 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
 
                     // TODO: 2017/8/15 点击确定向已选择卡片user区写入数据
                     if ((msg.length() % 2) != 0) {
-                        msg=msg+" ";
+                        msg = msg + " ";
                     }
                     byte[] bytes = msg.getBytes();
                     int length = bytes.length;
