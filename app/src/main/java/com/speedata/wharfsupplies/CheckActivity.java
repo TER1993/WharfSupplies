@@ -335,7 +335,7 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
                 .createExcel(this);
 
         Log.d("excel", list.toString());
-        scanFile(this, "/sdcard/WharfSupplies/export/pandian.xls");
+        scanFile(this, "/sdcard/testExcel.xls");
 
         try {
 
