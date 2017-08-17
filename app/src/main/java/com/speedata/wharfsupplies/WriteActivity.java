@@ -381,7 +381,8 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
             }
 
             Log.d(TAG, "result: " + result);
-
+            //测试一下短内容
+            msg = "木箱   wy-sd-23";
             this.msg = msg;
 
             Log.d(TAG, "msg: " + result);

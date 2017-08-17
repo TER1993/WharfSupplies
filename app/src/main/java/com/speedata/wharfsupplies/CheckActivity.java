@@ -70,6 +70,8 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
     private TextView Status;
     private boolean IsUtf8 = false;
 
+    private String TAG = "Test";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,7 +144,9 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
                                 break;
                             }
                             String tid = ks.get(i).tid;
-                            byte[] toByteArray = DataConversionUtils.hexStringToByteArray(tid);
+                    //        byte[] toByteArray = DataConversionUtils.hexStringToByteArray(tid);
+                            //可能是张明调用的方法不对。
+                            byte[] toByteArray = DataConversionUtils.HexString2Bytes(tid);
 
                             String user = "";
                             // 为处理结果中，中文显示乱码而修改。
@@ -150,8 +154,8 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
                                 try {
                                     user = new String(toByteArray, "utf8");
                                 } catch (UnsupportedEncodingException e) {
-                                    e.printStackTrace();
-                                }
+                                e.printStackTrace();
+                            }
                             } else {
                                 try {
                                     user = new String(toByteArray, "gbk");
@@ -317,8 +321,9 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
     }
 
     private void outPutFile() {
-            // TODO: 2017/8/14 拿到盘点结果的list，创建导出盘点excel
-            List<BaseInfor> list = getBaseList(firm);
+        // TODO: 2017/8/14 拿到盘点结果的list，创建导出盘点excel
+        List<BaseInfor> list = getBaseList(firm);
+
 
         if (list.size() == 0) {
             Toast.makeText(this, "当前没有数据，请添加数据", Toast.LENGTH_SHORT).show();
@@ -332,10 +337,11 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
                 .setFONT_BOLD(false)
                 .setBACKGROND_COLOR(Colour.WHITE)
                 .setContent_list_Strings(list)
+                .setWirteExcelPath("/sdcard/exportExcel.xls")
                 .createExcel(this);
 
         Log.d("excel", list.toString());
-        scanFile(this, "/sdcard/testExcel.xls");
+        scanFile(this, "/sdcard/exportExcel.xls");
 
         try {
 
@@ -349,15 +355,21 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
     private List<BaseInfor> getBaseList(List<EpcDataBase> firm) {
 
         List<BaseInfor> list1 = new ArrayList<>();
-
+        baseInfor = new BaseInfor();
         for (int i = 0; i < firm.size(); i++) {
             String a = firm.get(i).getTid_user();
+            Log.d(TAG, "getBaseList: a:" + a);
             String b[] = a.split("   ");
+            Log.d(TAG, "getBaseList: b:" + b[0]);
             for (int j = 0; j < b.length; j++) {
+
+                Log.d(TAG, "getBaseList: b[j]:" + b[j]);
                 fuzhi(b[j], j);
             }
             list1.add(baseInfor);
+            baseInfor = new BaseInfor();
         }
+        Log.d(TAG, "getBaseList: list1:" + list1);
         return list1;
     }
 
