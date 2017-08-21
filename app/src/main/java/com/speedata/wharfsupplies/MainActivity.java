@@ -68,10 +68,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_write:
+                ProgressDialogUtils.dismissProgressDialog();
+                ProgressDialogUtils.showProgressDialog(mContext, "正在进入写标签页面...");
                 Intent intent1 = new Intent(MainActivity.this, WriteActivity.class);
                 startActivity(intent1);
                 break;
             case R.id.iv_check:
+                ProgressDialogUtils.dismissProgressDialog();
+                ProgressDialogUtils.showProgressDialog(mContext, "正在进入盘点页面...");
                 Intent intent2 = new Intent(MainActivity.this, CheckActivity.class);
                 startActivity(intent2);
                 break;
@@ -220,11 +224,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         }
         scanFile(this, getString(R.string.import_path));
-        file = new File(getString(R.string.export_path));
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        scanFile(this, getString(R.string.export_path));
+//        file = new File(getString(R.string.export_path));
+//        if (!file.exists()) {
+//            file.mkdirs();
+//        }
+//        scanFile(this, getString(R.string.export_path));
     }
 
 
@@ -295,5 +299,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
 
     }
+
+    @Override
+    protected void onResume() {
+        ProgressDialogUtils.dismissProgressDialog();
+        super.onResume();
+
+    }
+
 
 }

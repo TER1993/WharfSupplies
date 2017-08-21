@@ -2,6 +2,7 @@ package com.speedata.wharfsupplies;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -13,10 +14,10 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,7 +28,9 @@ import com.speedata.libutils.DataConversionUtils;
 import com.speedata.libutils.excel.ExcelUtils;
 import com.speedata.wharfsupplies.adapter.CheckAdapter;
 import com.speedata.wharfsupplies.db.bean.BaseInfor;
+import com.speedata.wharfsupplies.db.dao.BaseInforDao;
 import com.speedata.wharfsupplies.utils.MyDateAndTime;
+import com.speedata.wharfsupplies.utils.ProgressDialogUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -35,13 +38,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jxl.format.Colour;
-import win.reginer.adapter.CommonRvAdapter;
 
-import static com.speedata.utils.ToolCommon.isNumeric;
 import static com.speedata.wharfsupplies.MainActivity.scanFile;
 import static com.speedata.wharfsupplies.application.CustomerApplication.iuhfService;
 
-public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChildClickListener, View.OnClickListener {
+public class CheckActivity extends Activity implements View.OnClickListener {
 
     protected TextView mBarTitle;
     protected ImageView mBarLeft;
@@ -55,7 +56,6 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
     private ListView EpcList;
     //item控件点击显示
     private AlertDialog mDialogItem;
-    private EditText etTxtInput; //控件弹出对话框上的输入框
     private int mPosition; //选择的dialog的item的position
     private android.support.v7.app.AlertDialog mExitDialog; //按退出时弹出对话框
 
@@ -71,6 +71,11 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
     private boolean IsUtf8 = false;
 
     private String TAG = "Test";
+    private BaseInforDao baseInforDao;
+    private Context mContext;
+
+    private List<BaseInfor> showList; //用于dialog显示点击结果
+    private TextView tvTxt; //控件弹出对话框上的显示框
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +85,12 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
         setContentView(R.layout.activity_check);
         initTitle();
         initView();
+        ProgressDialogUtils.dismissProgressDialog();
     }
 
     @Override
     protected void onResume() {
+        ProgressDialogUtils.showProgressDialog(mContext, "上电中...");
         super.onResume();
         if (iuhfService.OpenDev() == 0) {
             Toast.makeText(this, "上电成功", Toast.LENGTH_SHORT).show();
@@ -91,13 +98,17 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
             Toast.makeText(this, "上电失败", Toast.LENGTH_SHORT).show();
         }
         iuhfService.SetInvMode(3, 0, 32);
+        ProgressDialogUtils.dismissProgressDialog();
     }
 
 
 
     private void initView() {
         baseInfor = new BaseInfor();
+        mContext = CheckActivity.this;
+        baseInforDao = new BaseInforDao(mContext);
         mList = new ArrayList<>();
+        showList = new ArrayList<>();
         btnSave = (Button) findViewById(R.id.btn_save_xls);
         btnSave.setOnClickListener(this);
         btnCheck = (Button) findViewById(R.id.btn_check);
@@ -176,11 +187,23 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
                 adapter = new ArrayAdapter<EpcDataBase>(
                         getApplicationContext(), android.R.layout.simple_list_item_1, firm);
                 EpcList.setAdapter(adapter);
-                Status.setText("Total: " + firm.size());
 
+                Status.setText("Total: " + firm.size());
             }
         };
 
+        //listView的item点击事件
+        EpcList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //点击后根据内容查数据库，显示查询到的结果
+                String userMessage = firm.get(position).getTid_user();
+                String[] user = userMessage.split("   ");
+                String pkgno = user[0];
+                search(pkgno); //给showlist赋予显示用的内容
+                changeCount(); //显示点击的项的显示内容
+            }
+        });
     }
 
 
@@ -225,6 +248,7 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
 
     @Override
     protected void onStop() {
+        ProgressDialogUtils.showProgressDialog(mContext, "下电中");
         Log.w("stop", "im stopping");
         if (inSearch) {
             iuhfService.inventory_stop();
@@ -233,6 +257,7 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
         soundPool.release();
         iuhfService.CloseDev();
         super.onStop();
+        ProgressDialogUtils.dismissProgressDialog();
     }
 
 
@@ -267,10 +292,8 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
                     // 取消显示对话框
                     mExitDialog.dismiss();
                     break;
-
                 case DialogInterface.BUTTON_NEUTRAL: // 退出程序
                     // 结束，将导致onDestroy()方法被回调
-
                     finish();
                     break;
             }
@@ -295,12 +318,10 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
             case R.id.btn_save_xls:
                 //导出为txt文件，制作文件名
                 outPutFile();
-
                 break;
             case R.id.iv_left:
                 finish();
                 break;
-            
             case R.id.btn_check:
                 //开始盘点
                 if (inSearch) {
@@ -321,14 +342,26 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
     }
 
     private void outPutFile() {
-        // TODO: 2017/8/14 拿到盘点结果的list，创建导出盘点excel
+
         List<BaseInfor> list = getBaseList(firm);
-
-
+        List<BaseInfor> resultList = new ArrayList<>();
         if (list.size() == 0) {
-            Toast.makeText(this, "当前没有数据，请添加数据", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "当前没有可导出的数据，请添加数据", Toast.LENGTH_SHORT).show();
             return;
         }
+        // 得到盘点到的信息的完整内容列表，导出到excel文件中
+        for (int i = 0; i < list.size(); i++) {
+            BaseInfor baseInfor = new BaseInfor();
+            baseInfor.setPKGNO(list.get(i).getPKGNO());
+            List<BaseInfor> baseInfors = baseInforDao.imQueryList("PKGNO=?", new String[]{baseInfor.getPKGNO()});
+            if (baseInfors.size() == 1) {
+                resultList.add(baseInfors.get(0));
+            }
+        }
+
+        //导出到文件, 自定义一个文件名
+        try {
+            String filename = createFilename();
 
         ExcelUtils.getInstance()
                 .setSHEET_NAME("sheet1")
@@ -336,20 +369,14 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
                 .setFONT_TIMES(8)
                 .setFONT_BOLD(false)
                 .setBACKGROND_COLOR(Colour.WHITE)
-                .setContent_list_Strings(list)
-                .setWirteExcelPath("/sdcard/exportExcel.xls")
+                .setContent_list_Strings(resultList)
+                .setWirteExcelPath(filename)
                 .createExcel(this);
-
-        Log.d("excel", list.toString());
-        scanFile(this, "/sdcard/exportExcel.xls");
-
-        try {
-
-            scanFile(CheckActivity.this, createFilename());
+        Log.d("excel", resultList.toString());
+        scanFile(this, filename);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private List<BaseInfor> getBaseList(List<EpcDataBase> firm) {
@@ -362,9 +389,9 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
             String b[] = a.split("   ");
             Log.d(TAG, "getBaseList: b:" + b[0]);
             for (int j = 0; j < b.length; j++) {
-
+                //取到的箱件编号和中文名赋值到list中
                 Log.d(TAG, "getBaseList: b[j]:" + b[j]);
-                fuzhi(b[j], j);
+                fuzhi(b[j], j + 1);
             }
             list1.add(baseInfor);
             baseInfor = new BaseInfor();
@@ -443,79 +470,153 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
 
         String date = checktime.substring(0, 8); //获得年月日
         String time = checktime.substring(8, 12); //获得年月日
-        String name = getString(R.string.count_) + date + "_" + time;
+        String name = "exportExcel_" + date + "_" + time;
 
-        return  getString(R.string.export_path_) + name + getString(R.string.txt);
+        return  "/sdcard/" + name + ".xls";
 
     }
 
-    @Override
-    public void onChildClick(View v, int position) {
-        switch (v.getId()) { //点击数量时弹出修改输入对话框
-            case R.id.tv_count_line2:
-                changeCount(position);
-                break;
+
+        //显示点击item后的匹配信息
+    private void changeCount() {
+        BaseInfor message = new BaseInfor();
+        String show = "";
+        if (showList.size() == 0) {
+            show = "  没有匹配此项的信息";
+        } else {
+            message = showList.get(0);
+            show = showResult(message);
         }
+
+        //item的解决方案按钮
+        CheckActivity.DialogButtonOnClickListener dialogButtonOnClickListener = new  CheckActivity.DialogButtonOnClickListener();
+        tvTxt = new TextView(CheckActivity.this);
+        mDialogItem = new android.app.AlertDialog.Builder(CheckActivity.this)
+                .setTitle("显示匹配结果")
+                .setView(tvTxt)
+                .setPositiveButton("确定", dialogButtonOnClickListener)
+                .show();
+
+        tvTxt.append(show);
     }
 
 
-    private void changeCount(int position) {
-        String count = mList.get(position).getPKGNO();
-        //item的解决方案按钮
+    private String showResult(BaseInfor message) {
+        String result = "";
+        List<BaseInfor> list = new ArrayList<>();
+        list = baseInforDao.imQueryList();
+        BaseInfor baseInfor = list.get(0);
+        Log.d(TAG, "数据库0位置数据" + baseInfor.toString());
+        for (int i = 0; i < 18; i++) {
+            result += quzhi(i, baseInfor) + " : " + quzhi(i, message) + "\n";
+        }
+        return result;
+    }
 
-        DialogButtonOnClickListener dialogButtonOnClickListener = new DialogButtonOnClickListener();
-        etTxtInput = new EditText(CheckActivity.this);
-        mDialogItem = new AlertDialog.Builder(CheckActivity.this)
-                .setTitle("请输入数量")
-                .setView(etTxtInput)
-                .setPositiveButton("确定", dialogButtonOnClickListener)
-                .setNegativeButton("取消", dialogButtonOnClickListener)
-                .show();
-        mPosition = position;
-        etTxtInput.append(count);
+    private String quzhi(int i, BaseInfor baseInfor) {
+        String quzhi = "";
+        switch (i) {
+            case 0:
+                quzhi = baseInfor.getNO();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 1:
+                quzhi = baseInfor.getPKGNO();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 2:
+                quzhi = baseInfor.getDescriptionCN();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 3:
+                quzhi = baseInfor.getDescriptionEN();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 4:
+                quzhi = baseInfor.getPCS();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 5:
+                quzhi = baseInfor.getPKGWAY();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 6:
+                quzhi = baseInfor.getGW();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 7:
+                quzhi = baseInfor.getNW();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 8:
+                quzhi = baseInfor.getL();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 9:
+                quzhi = baseInfor.getW();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 10:
+                quzhi = baseInfor.getH();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 11:
+                quzhi = baseInfor.getVOL();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 12:
+                quzhi = baseInfor.getPONO();
+                quzhi = quzhi.replaceAll("\n", "");
+                break;
+            case 13:
+                quzhi = baseInfor.getOrigin();
+                if (quzhi != null) {
+                    quzhi = quzhi.replaceAll("\n", "");
+                }
+                break;
+            case 14:
+                quzhi = baseInfor.getSupplier();
+                if (quzhi != null) {
+                    quzhi = quzhi.replaceAll("\n", "");
+                }
+                break;
+            case 15:
+                quzhi = baseInfor.getHSCODE();
+                if (quzhi != null) {
+                    quzhi = quzhi.replaceAll("\n", "");
+                }
+                break;
+            case 16:
+                quzhi = baseInfor.getTotalPrice();
+                if (quzhi != null) {
+                    quzhi = quzhi.replaceAll("\n", "");
+                }
+                break;
+            case 17:
+                quzhi = baseInfor.getCurrency();
+                if (quzhi != null) {
+                    quzhi = quzhi.replaceAll("\n", "");
+                }
+                break;
+
+        }
+        return quzhi;
     }
 
 
     /**
-     * 问题退出时的对话框的按钮点击事件
+     * 显示信息退出时的对话框的按钮点击事件
      */
     private class DialogButtonOnClickListener implements DialogInterface.OnClickListener {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE: // 确定
-
-                    String txt = etTxtInput.getText().toString();
-
-                    if (isNumeric(txt)) {
-                        mDialogItem.dismiss();
-
-                        updateList(txt);
-                    } else {
-                        Toast.makeText(CheckActivity.this, "只能输入数字，请重新输入数量", Toast.LENGTH_SHORT).show();
-                    }
-
-
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE: // 取消
                     // 取消显示对话框
                     mDialogItem.dismiss();
-
                     break;
             }
         }
-
-        //更新数组以及控件的显示
-        private void updateList(String txt) {
-            if ("".equals(txt)) {
-                Toast.makeText(CheckActivity.this, "未修改", Toast.LENGTH_SHORT).show();
-            } else {
-                mList.get(mPosition).setPKGNO(txt);
-            }
-
-            mAdapter.notifyDataSetChanged();
-        }
-
     }
 
     class EpcDataBase {
@@ -560,5 +661,21 @@ public class CheckActivity extends Activity implements CommonRvAdapter.OnItemChi
                         + "(" + "COUNT:" + valid + ")" + " RSSI:" + rssi+"\n";
             }
         }
+    }
+
+    //查询所点击的项目有没有匹配的信息
+    private void search(String input) {
+        Log.d(TAG, "开始查询");
+        List<BaseInfor> baseInfors = baseInforDao.imQueryList("PKGNO=?", new String[]{input});
+        if (baseInfors.size() == 0) { //没搜到这个编号的产品
+            Log.d(TAG, "没搜到此货品");
+            showList.clear();
+            Toast.makeText(this, "没有搜索到匹配的结果，请确认扫描标签是否正确", Toast.LENGTH_SHORT).show();
+        } else { //搜到匹配的货品
+            showList.clear();
+            showList.addAll(baseInfors);
+            Log.d(TAG, "搜到货品" + mList.toString());
+        }
+        Log.d(TAG, "结束查询");
     }
 }

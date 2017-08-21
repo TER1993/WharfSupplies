@@ -26,6 +26,7 @@ import com.speedata.wharfsupplies.application.CustomerApplication;
 import com.speedata.wharfsupplies.db.bean.BaseInfor;
 import com.speedata.wharfsupplies.db.dao.BaseInforDao;
 import com.speedata.wharfsupplies.dialog.SearchTagDialog;
+import com.speedata.wharfsupplies.utils.ProgressDialogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,7 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
 
     //item控件点击显示
     private android.app.AlertDialog mDialogItem;
-    private TextView tvTxt; //控件弹出对话框上的输入框
+    private TextView tvTxt; //控件弹出对话框上的显示框
     private int mPosition; //选择的dialog的item的position
 
     private BaseInforDao baseInforDao;
@@ -69,19 +70,23 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
         setContentView(R.layout.activity_write);
         initTitle();
         initView();
+        ProgressDialogUtils.dismissProgressDialog();
     }
 
     @Override
     protected void onResume() {
+        ProgressDialogUtils.showProgressDialog(mContext, "上电中...");
         super.onResume();
         if (iuhfService.OpenDev() == 0) {
             Toast.makeText(this, "上电成功", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "上电失败", Toast.LENGTH_SHORT).show();
         }
+        ProgressDialogUtils.dismissProgressDialog();
     }
 
     private void initView() {
+
         //输入法管理
         mimm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         mList = new ArrayList<>();
@@ -362,8 +367,10 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
 
     @Override
     protected void onStop() {
+        ProgressDialogUtils.showProgressDialog(mContext, "下电中...");
         super.onStop();
         iuhfService.CloseDev();
+        ProgressDialogUtils.dismissProgressDialog();
     }
 
     /**
@@ -376,16 +383,19 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
             //处理一下要写的数据
             BaseInfor baseInfor = mList.get(mPosition);
             String result = "";
+            String pkgno = baseInfor.getPKGNO();
+            String zhongwenpinming = baseInfor.getDescriptionCN();
+
             for (int i = 0; i < 18; i++) {
                 result += quzhi(i, baseInfor) + "   ";
             }
 
             Log.d(TAG, "result: " + result);
             //测试一下短内容
-            msg = "木箱   wy-sd-23";
+            msg = pkgno + "   " + zhongwenpinming;
             this.msg = msg;
 
-            Log.d(TAG, "msg: " + result);
+            Log.d(TAG, "msg: " + msg);
 
         }
 
@@ -394,12 +404,13 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE: // 确定
 
-                    // TODO: 2017/8/15 目前的写入失败，原因是长度不支持，张明联系厂家了
+                    // TODO: 2017/8/21  目前写入2个参数，保证长度够用
                     if ((msg.length() % 2) != 0) {
                         msg = msg + " ";
                     }
                     byte[] bytes = msg.getBytes();
                     int length = bytes.length;
+                    Log.d(TAG, "长度: " + length);
                     int writeArea = iuhfService.write_area(3, 0, "00000000", bytes);
                     if (writeArea == 0) {
                         Toast.makeText(application, "写入成功", Toast.LENGTH_SHORT).show();
