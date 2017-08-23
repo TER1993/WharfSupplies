@@ -108,6 +108,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     Toast.makeText(this, "当前没有数据，请添加数据", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if (("序号\n" + "NO.").equals(mlist.get(0).getANO())) {
+                    mlist.remove(0);
+                }
 
                 ExcelUtils.getInstance()
                         .setSHEET_NAME("sheet1")

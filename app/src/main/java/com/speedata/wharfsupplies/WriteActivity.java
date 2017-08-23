@@ -155,6 +155,9 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
     private void changeCount(int position) {
         BaseInfor message = mList.get(position);
         //item的解决方案按钮
+        if (("序号\n" + "NO.").equals(message.getANO())) {
+            return;
+        }
 
         DialogItemOnClickListener dialogButtonOnClickListener = new DialogItemOnClickListener(message.toString());
         tvTxt = new TextView(WriteActivity.this);
