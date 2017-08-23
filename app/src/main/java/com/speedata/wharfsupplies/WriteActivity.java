@@ -62,6 +62,8 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
     //输入法管理器
     protected InputMethodManager mimm = null;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,8 +160,8 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
         if (("序号\n" + "NO.").equals(message.getANO())) {
             return;
         }
-
-        DialogItemOnClickListener dialogButtonOnClickListener = new DialogItemOnClickListener(message.toString());
+        mPosition = position;
+        DialogItemOnClickListener dialogButtonOnClickListener = new DialogItemOnClickListener();
         tvTxt = new TextView(WriteActivity.this);
         mDialogItem = new android.app.AlertDialog.Builder(WriteActivity.this)
                 .setTitle("确认写入此信息？")
@@ -167,7 +169,7 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
                 .setPositiveButton("确定", dialogButtonOnClickListener)
                 .setNegativeButton("取消", dialogButtonOnClickListener)
                 .show();
-        mPosition = position;
+
         String show = showResult(message);
         tvTxt.append(show);
     }
@@ -382,7 +384,7 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
     private class DialogItemOnClickListener implements DialogInterface.OnClickListener {
         private String msg;
 
-        public DialogItemOnClickListener(String msg) {
+        public DialogItemOnClickListener() {
             //处理一下要写的数据
             BaseInfor baseInfor = mList.get(mPosition);
             String result = "";
@@ -396,7 +398,6 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
             Log.d(TAG, "result: " + result);
             //测试一下短内容
             msg = pkgno + "   " + zhongwenpinming;
-            this.msg = msg;
 
             Log.d(TAG, "msg: " + msg);
 
