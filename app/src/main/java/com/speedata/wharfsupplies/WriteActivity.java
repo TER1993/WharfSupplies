@@ -187,83 +187,83 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
         String quzhi = "";
         switch (i) {
             case 0:
-                quzhi = baseInfor.getaNO();
+                quzhi = baseInfor.getANO();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 1:
-                quzhi = baseInfor.getbPKGNO();
+                quzhi = baseInfor.getBPKGNO();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 2:
-                quzhi = baseInfor.getcDescriptionCN();
+                quzhi = baseInfor.getCDescriptionCN();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 3:
-                quzhi = baseInfor.getdDescriptionEN();
+                quzhi = baseInfor.getDDescriptionEN();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 4:
-                quzhi = baseInfor.getePCS();
+                quzhi = baseInfor.getEPCS();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 5:
-                quzhi = baseInfor.getfPKGWAY();
+                quzhi = baseInfor.getFPKGWAY();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 6:
-                quzhi = baseInfor.getgGW();
+                quzhi = baseInfor.getGGW();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 7:
-                quzhi = baseInfor.gethNW();
+                quzhi = baseInfor.getHNW();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 8:
-                quzhi = baseInfor.getiL();
+                quzhi = baseInfor.getIL();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 9:
-                quzhi = baseInfor.getjW();
+                quzhi = baseInfor.getJW();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 10:
-                quzhi = baseInfor.getkH();
+                quzhi = baseInfor.getKH();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 11:
-                quzhi = baseInfor.getlVOL();
+                quzhi = baseInfor.getLVOL();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 12:
-                quzhi = baseInfor.getmPONO();
+                quzhi = baseInfor.getMPONO();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 13:
-                quzhi = baseInfor.getnOrigin();
+                quzhi = baseInfor.getNOrigin();
                 if (quzhi != null) {
                     quzhi = quzhi.replaceAll("\n", "");
                 }
                 break;
             case 14:
-                quzhi = baseInfor.getoSupplier();
+                quzhi = baseInfor.getOSupplier();
                 if (quzhi != null) {
                     quzhi = quzhi.replaceAll("\n", "");
                 }
                 break;
             case 15:
-                quzhi = baseInfor.getpHSCODE();
+                quzhi = baseInfor.getPHSCODE();
                 if (quzhi != null) {
                     quzhi = quzhi.replaceAll("\n", "");
                 }
                 break;
             case 16:
-                quzhi = baseInfor.getqTotalPrice();
+                quzhi = baseInfor.getQTotalPrice();
                 if (quzhi != null) {
                     quzhi = quzhi.replaceAll("\n", "");
                 }
                 break;
             case 17:
-                quzhi = baseInfor.getrCurrency();
+                quzhi = baseInfor.getRCurrency();
                 if (quzhi != null) {
                     quzhi = quzhi.replaceAll("\n", "");
                 }
@@ -343,9 +343,9 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
 
     private void search(String input) {
         Log.d(TAG, "开始查询");
-        List<BaseInfor> baseInfors = baseInforDao.imQueryList("cDescriptionCN=?", new String[]{input});
+        List<BaseInfor> baseInfors = baseInforDao.imQueryList("CDescriptionCN=?", new String[]{input});
         if (baseInfors.size() == 0) { //中文没搜到，搜英文的内容
-            baseInfors = baseInforDao.imQueryList("dDescriptionEN=?", new String[]{input});
+            baseInfors = baseInforDao.imQueryList("DDescriptionEN=?", new String[]{input});
             Log.d(TAG, "没搜到中文");
             if (baseInfors.size() == 0) { //没搜到结果
                 Toast.makeText(this, "没有搜索到匹配的结果，请确认搜索内容是否正确", Toast.LENGTH_SHORT).show();
@@ -383,8 +383,8 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
             //处理一下要写的数据
             BaseInfor baseInfor = mList.get(mPosition);
             String result = "";
-            String pkgno = baseInfor.getbPKGNO();
-            String zhongwenpinming = baseInfor.getcDescriptionCN();
+            String pkgno = baseInfor.getBPKGNO();
+            String zhongwenpinming = baseInfor.getCDescriptionCN();
 
             for (int i = 0; i < 18; i++) {
                 result += quzhi(i, baseInfor) + "   ";
@@ -404,7 +404,7 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE: // 确定
 
-                    // TODO: 2017/8/21  目前写入2个参数，保证长度够用
+                    //目前写入2个参数，保证长度够用
                     if ((msg.length() % 2) != 0) {
                         msg = msg + " ";
                     }

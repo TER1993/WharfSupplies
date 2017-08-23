@@ -352,8 +352,8 @@ public class CheckActivity extends Activity implements View.OnClickListener {
         // 得到盘点到的信息的完整内容列表，导出到excel文件中
         for (int i = 0; i < list.size(); i++) {
             BaseInfor baseInfor = new BaseInfor();
-            baseInfor.setbPKGNO(list.get(i).getbPKGNO());
-            List<BaseInfor> baseInfors = baseInforDao.imQueryList("bPKGNO=?", new String[]{baseInfor.getbPKGNO()});
+            baseInfor.setBPKGNO(list.get(i).getBPKGNO());
+            List<BaseInfor> baseInfors = baseInforDao.imQueryList("BPKGNO=?", new String[]{baseInfor.getBPKGNO()});
             if (baseInfors.size() == 1) {
                 resultList.add(baseInfors.get(0));
             }
@@ -403,58 +403,58 @@ public class CheckActivity extends Activity implements View.OnClickListener {
     private void fuzhi(String neirong, int diji) {
         switch (diji) {
             case 0:
-                baseInfor.setaNO(neirong);
+                baseInfor.setANO(neirong);
                 break;
             case 1:
-                baseInfor.setbPKGNO(neirong);
+                baseInfor.setBPKGNO(neirong);
                 break;
             case 2:
-                baseInfor.setcDescriptionCN(neirong);
+                baseInfor.setCDescriptionCN(neirong);
                 break;
             case 3:
-                baseInfor.setdDescriptionEN(neirong);
+                baseInfor.setDDescriptionEN(neirong);
                 break;
             case 4:
-                baseInfor.setePCS(neirong);
+                baseInfor.setEPCS(neirong);
                 break;
             case 5:
-                baseInfor.setfPKGWAY(neirong);
+                baseInfor.setFPKGWAY(neirong);
                 break;
             case 6:
-                baseInfor.setgGW(neirong);
+                baseInfor.setGGW(neirong);
                 break;
             case 7:
-                baseInfor.sethNW(neirong);
+                baseInfor.setHNW(neirong);
                 break;
             case 8:
-                baseInfor.setiL(neirong);
+                baseInfor.setIL(neirong);
                 break;
             case 9:
-                baseInfor.setjW(neirong);
+                baseInfor.setJW(neirong);
                 break;
             case 10:
-                baseInfor.setkH(neirong);
+                baseInfor.setKH(neirong);
                 break;
             case 11:
-                baseInfor.setlVOL(neirong);
+                baseInfor.setLVOL(neirong);
                 break;
             case 12:
-                baseInfor.setmPONO(neirong);
+                baseInfor.setMPONO(neirong);
                 break;
             case 13:
-                baseInfor.setnOrigin(neirong);
+                baseInfor.setNOrigin(neirong);
                 break;
             case 14:
-                baseInfor.setoSupplier(neirong);
+                baseInfor.setOSupplier(neirong);
                 break;
             case 15:
-                baseInfor.setpHSCODE(neirong);
+                baseInfor.setPHSCODE(neirong);
                 break;
             case 16:
-                baseInfor.setqTotalPrice(neirong);
+                baseInfor.setQTotalPrice(neirong);
                 break;
             case 17:
-                baseInfor.setrCurrency(neirong);
+                baseInfor.setRCurrency(neirong);
                 break;
         }
 
@@ -517,83 +517,83 @@ public class CheckActivity extends Activity implements View.OnClickListener {
         String quzhi = "";
         switch (i) {
             case 0:
-                quzhi = baseInfor.getaNO();
+                quzhi = baseInfor.getANO();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 1:
-                quzhi = baseInfor.getbPKGNO();
+                quzhi = baseInfor.getBPKGNO();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 2:
-                quzhi = baseInfor.getcDescriptionCN();
+                quzhi = baseInfor.getCDescriptionCN();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 3:
-                quzhi = baseInfor.getdDescriptionEN();
+                quzhi = baseInfor.getDDescriptionEN();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 4:
-                quzhi = baseInfor.getePCS();
+                quzhi = baseInfor.getEPCS();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 5:
-                quzhi = baseInfor.getfPKGWAY();
+                quzhi = baseInfor.getFPKGWAY();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 6:
-                quzhi = baseInfor.getgGW();
+                quzhi = baseInfor.getGGW();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 7:
-                quzhi = baseInfor.gethNW();
+                quzhi = baseInfor.getHNW();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 8:
-                quzhi = baseInfor.getiL();
+                quzhi = baseInfor.getIL();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 9:
-                quzhi = baseInfor.getjW();
+                quzhi = baseInfor.getJW();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 10:
-                quzhi = baseInfor.getkH();
+                quzhi = baseInfor.getKH();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 11:
-                quzhi = baseInfor.getlVOL();
+                quzhi = baseInfor.getLVOL();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 12:
-                quzhi = baseInfor.getmPONO();
+                quzhi = baseInfor.getMPONO();
                 quzhi = quzhi.replaceAll("\n", "");
                 break;
             case 13:
-                quzhi = baseInfor.getnOrigin();
+                quzhi = baseInfor.getNOrigin();
                 if (quzhi != null) {
                     quzhi = quzhi.replaceAll("\n", "");
                 }
                 break;
             case 14:
-                quzhi = baseInfor.getoSupplier();
+                quzhi = baseInfor.getOSupplier();
                 if (quzhi != null) {
                     quzhi = quzhi.replaceAll("\n", "");
                 }
                 break;
             case 15:
-                quzhi = baseInfor.getpHSCODE();
+                quzhi = baseInfor.getPHSCODE();
                 if (quzhi != null) {
                     quzhi = quzhi.replaceAll("\n", "");
                 }
                 break;
             case 16:
-                quzhi = baseInfor.getqTotalPrice();
+                quzhi = baseInfor.getQTotalPrice();
                 if (quzhi != null) {
                     quzhi = quzhi.replaceAll("\n", "");
                 }
                 break;
             case 17:
-                quzhi = baseInfor.getrCurrency();
+                quzhi = baseInfor.getRCurrency();
                 if (quzhi != null) {
                     quzhi = quzhi.replaceAll("\n", "");
                 }
@@ -666,7 +666,7 @@ public class CheckActivity extends Activity implements View.OnClickListener {
     //查询所点击的项目有没有匹配的信息
     private void search(String input) {
         Log.d(TAG, "开始查询");
-        List<BaseInfor> baseInfors = baseInforDao.imQueryList("bPKGNO=?", new String[]{input});
+        List<BaseInfor> baseInfors = baseInforDao.imQueryList("BPKGNO=?", new String[]{input});
         if (baseInfors.size() == 0) { //没搜到这个编号的产品
             Log.d(TAG, "没搜到此货品");
             showList.clear();

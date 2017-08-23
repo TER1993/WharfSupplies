@@ -25,8 +25,8 @@ public class CheckAdapter extends CommonRvAdapter<BaseInfor> {
 
     @Override
     public void convert(BaseAdapterHelper helper, BaseInfor item, int position) {
-        helper.setText(R.id.tv_count_line1, item.getaNO());
-        helper.setText(R.id.tv_count_line2, item.getcDescriptionCN());
+        helper.setText(R.id.tv_count_line1, item.getANO());
+        helper.setText(R.id.tv_count_line2, item.getCDescriptionCN());
         setOnItemChildClickListener(helper, position, R.id.tv_count_line2);
 
     }

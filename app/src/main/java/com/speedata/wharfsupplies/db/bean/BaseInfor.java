@@ -4,6 +4,7 @@ import com.elsw.base.db.orm.annotation.Column;
 import com.elsw.base.db.orm.annotation.Table;
 import com.speedata.libutils.excel.Excel;
 
+
 /**
  * Created by Administrator on 2017/8/14.
  */
@@ -12,76 +13,76 @@ public  class BaseInfor { //导入excel表格内容
 
 
     @Excel(ignore = false, name = "序号NO.")
-    @Column(name = "aNO")
-    private String aNO; //序号
+    @Column(name = "ANO")
+    private String ANO; //序号
 
     @Excel(ignore = false, name = "箱件编号PKG NO.")
-    @Column(name = "bPKGNO")
-    private String bPKGNO; //箱件编号
+    @Column(name = "BPKGNO")
+    private String BPKGNO; //箱件编号
 
     @Excel(ignore = false, name = "中文品名DESCRIPTION(CN)")
-    @Column(name = "cDescriptionCN")
-    private String cDescriptionCN; //中文品名
+    @Column(name = "CDescriptionCN")
+    private String CDescriptionCN; //中文品名
 
     @Excel(ignore = false, name = "英文品名DESCRIPTION(EN)")
-    @Column(name = "dDescriptionEN")
-    private String dDescriptionEN; //英文品名
+    @Column(name = "DDescriptionEN")
+    private String DDescriptionEN; //英文品名
 
     @Excel(ignore = false, name = "件数PCS")
-    @Column(name = "ePCS")
-    private String ePCS; //件数
+    @Column(name = "EPCS")
+    private String EPCS; //件数
 
     @Excel(ignore = false, name = "包装方式PKG WAY")
-    @Column(name = "fPKGWAY")
-    private String fPKGWAY; //包装方式
+    @Column(name = "FPKGWAY")
+    private String FPKGWAY; //包装方式
 
     @Excel(ignore = false, name = "毛重(千克)G.W.(KG)")
-    @Column(name = "gGW")
-    private String gGW; //毛重
+    @Column(name = "GGW")
+    private String GGW; //毛重
 
     @Excel(ignore = false, name = "净重(千克)N.W.(KG)")
-    @Column(name = "hNW")
-    private String hNW; //净重
+    @Column(name = "HNW")
+    private String HNW; //净重
 
     @Excel(ignore = false, name = "长L(CM)")
-    @Column(name = "iL")
-    private String iL; //长
+    @Column(name = "IL")
+    private String IL; //长
 
     @Excel(ignore = false, name = "宽W(CM)")
-    @Column(name = "jW")
-    private String jW; //宽
+    @Column(name = "JW")
+    private String JW; //宽
 
     @Excel(ignore = false, name = "高H(CM)")
-    @Column(name = "kH")
-    private String kH; //高
+    @Column(name = "KH")
+    private String KH; //高
 
     @Excel(ignore = false, name = "体积VOL.(M3)")
-    @Column(name = "lVOL")
-    private String lVOL; //体积
+    @Column(name = "LVOL")
+    private String LVOL; //体积
 
     @Excel(ignore = false, name = "合同号PO NO.")
-    @Column(name = "mPONO")
-    private String mPONO; //合同号
+    @Column(name = "MPONO")
+    private String MPONO; //合同号
 
     @Excel(ignore = false, name = "货源地ORIGIN")
-    @Column(name = "nOrigin")
-    private String nOrigin; //货源地
+    @Column(name = "NOrigin")
+    private String NOrigin; //货源地
 
     @Excel(ignore = false, name = "供货商SUPPLIER")
-    @Column(name = "oSupplier")
-    private String oSupplier; //供货商
+    @Column(name = "OSupplier")
+    private String OSupplier; //供货商
 
     @Excel(ignore = false, name = "HS编码HS CODE")
-    @Column(name = "pHSCODE")
-    private String pHSCODE; //HS编码
+    @Column(name = "PHSCODE")
+    private String PHSCODE; //HS编码
 
     @Excel(ignore = false, name = "总价TOTAL PRICE")
-    @Column(name = "qTotalPrice")
-    private String qTotalPrice; //总价
+    @Column(name = "QTotalPrice")
+    private String QTotalPrice; //总价
 
     @Excel(ignore = false, name = "币种CURRENCY")
-    @Column(name = "rCurrency")
-    private String rCurrency; //币种
+    @Column(name = "RCurrency")
+    private String RCurrency; //币种
 
 
 //    @Excel(ignore = false, name = "净重(千克)N.W.(KG)")
@@ -158,171 +159,171 @@ public  class BaseInfor { //导入excel表格内容
 //    private String NO; //序号
 
 
-    public String getaNO() {
-        return aNO;
+    public String getANO() {
+        return ANO;
     }
 
-    public void setaNO(String aNO) {
-        this.aNO = aNO;
+    public void setANO(String ANO) {
+        this.ANO = ANO;
     }
 
-    public String getbPKGNO() {
-        return bPKGNO;
+    public String getBPKGNO() {
+        return BPKGNO;
     }
 
-    public void setbPKGNO(String bPKGNO) {
-        this.bPKGNO = bPKGNO;
+    public void setBPKGNO(String BPKGNO) {
+        this.BPKGNO = BPKGNO;
     }
 
-    public String getcDescriptionCN() {
-        return cDescriptionCN;
+    public String getCDescriptionCN() {
+        return CDescriptionCN;
     }
 
-    public void setcDescriptionCN(String cDescriptionCN) {
-        this.cDescriptionCN = cDescriptionCN;
+    public void setCDescriptionCN(String CDescriptionCN) {
+        this.CDescriptionCN = CDescriptionCN;
     }
 
-    public String getdDescriptionEN() {
-        return dDescriptionEN;
+    public String getDDescriptionEN() {
+        return DDescriptionEN;
     }
 
-    public void setdDescriptionEN(String dDescriptionEN) {
-        this.dDescriptionEN = dDescriptionEN;
+    public void setDDescriptionEN(String DDescriptionEN) {
+        this.DDescriptionEN = DDescriptionEN;
     }
 
-    public String getePCS() {
-        return ePCS;
+    public String getEPCS() {
+        return EPCS;
     }
 
-    public void setePCS(String ePCS) {
-        this.ePCS = ePCS;
+    public void setEPCS(String EPCS) {
+        this.EPCS = EPCS;
     }
 
-    public String getfPKGWAY() {
-        return fPKGWAY;
+    public String getFPKGWAY() {
+        return FPKGWAY;
     }
 
-    public void setfPKGWAY(String fPKGWAY) {
-        this.fPKGWAY = fPKGWAY;
+    public void setFPKGWAY(String FPKGWAY) {
+        this.FPKGWAY = FPKGWAY;
     }
 
-    public String getgGW() {
-        return gGW;
+    public String getGGW() {
+        return GGW;
     }
 
-    public void setgGW(String gGW) {
-        this.gGW = gGW;
+    public void setGGW(String GGW) {
+        this.GGW = GGW;
     }
 
-    public String gethNW() {
-        return hNW;
+    public String getHNW() {
+        return HNW;
     }
 
-    public void sethNW(String hNW) {
-        this.hNW = hNW;
+    public void setHNW(String HNW) {
+        this.HNW = HNW;
     }
 
-    public String getiL() {
-        return iL;
+    public String getIL() {
+        return IL;
     }
 
-    public void setiL(String iL) {
-        this.iL = iL;
+    public void setIL(String IL) {
+        this.IL = IL;
     }
 
-    public String getjW() {
-        return jW;
+    public String getJW() {
+        return JW;
     }
 
-    public void setjW(String jW) {
-        this.jW = jW;
+    public void setJW(String JW) {
+        this.JW = JW;
     }
 
-    public String getkH() {
-        return kH;
+    public String getKH() {
+        return KH;
     }
 
-    public void setkH(String kH) {
-        this.kH = kH;
+    public void setKH(String KH) {
+        this.KH = KH;
     }
 
-    public String getlVOL() {
-        return lVOL;
+    public String getLVOL() {
+        return LVOL;
     }
 
-    public void setlVOL(String lVOL) {
-        this.lVOL = lVOL;
+    public void setLVOL(String LVOL) {
+        this.LVOL = LVOL;
     }
 
-    public String getmPONO() {
-        return mPONO;
+    public String getMPONO() {
+        return MPONO;
     }
 
-    public void setmPONO(String mPONO) {
-        this.mPONO = mPONO;
+    public void setMPONO(String MPONO) {
+        this.MPONO = MPONO;
     }
 
-    public String getnOrigin() {
-        return nOrigin;
+    public String getNOrigin() {
+        return NOrigin;
     }
 
-    public void setnOrigin(String nOrigin) {
-        this.nOrigin = nOrigin;
+    public void setNOrigin(String NOrigin) {
+        this.NOrigin = NOrigin;
     }
 
-    public String getoSupplier() {
-        return oSupplier;
+    public String getOSupplier() {
+        return OSupplier;
     }
 
-    public void setoSupplier(String oSupplier) {
-        this.oSupplier = oSupplier;
+    public void setOSupplier(String OSupplier) {
+        this.OSupplier = OSupplier;
     }
 
-    public String getpHSCODE() {
-        return pHSCODE;
+    public String getPHSCODE() {
+        return PHSCODE;
     }
 
-    public void setpHSCODE(String pHSCODE) {
-        this.pHSCODE = pHSCODE;
+    public void setPHSCODE(String PHSCODE) {
+        this.PHSCODE = PHSCODE;
     }
 
-    public String getqTotalPrice() {
-        return qTotalPrice;
+    public String getQTotalPrice() {
+        return QTotalPrice;
     }
 
-    public void setqTotalPrice(String qTotalPrice) {
-        this.qTotalPrice = qTotalPrice;
+    public void setQTotalPrice(String QTotalPrice) {
+        this.QTotalPrice = QTotalPrice;
     }
 
-    public String getrCurrency() {
-        return rCurrency;
+    public String getRCurrency() {
+        return RCurrency;
     }
 
-    public void setrCurrency(String rCurrency) {
-        this.rCurrency = rCurrency;
+    public void setRCurrency(String RCurrency) {
+        this.RCurrency = RCurrency;
     }
 
     @Override
     public String toString() {
         return "BaseInfor{" +
-                "aNO='" + aNO + '\'' +
-                ", bPKGNO='" + bPKGNO + '\'' +
-                ", cDescriptionCN='" + cDescriptionCN + '\'' +
-                ", dDescriptionEN='" + dDescriptionEN + '\'' +
-                ", ePCS='" + ePCS + '\'' +
-                ", fPKGWAY='" + fPKGWAY + '\'' +
-                ", gGW='" + gGW + '\'' +
-                ", hNW='" + hNW + '\'' +
-                ", iL='" + iL + '\'' +
-                ", jW='" + jW + '\'' +
-                ", kH='" + kH + '\'' +
-                ", lVOL='" + lVOL + '\'' +
-                ", mPONO='" + mPONO + '\'' +
-                ", nOrigin='" + nOrigin + '\'' +
-                ", oSupplier='" + oSupplier + '\'' +
-                ", pHSCODE='" + pHSCODE + '\'' +
-                ", qTotalPrice='" + qTotalPrice + '\'' +
-                ", rCurrency='" + rCurrency + '\'' +
+                "ANO='" + ANO + '\'' +
+                ", BPKGNO='" + BPKGNO + '\'' +
+                ", CDescriptionCN='" + CDescriptionCN + '\'' +
+                ", DDescriptionEN='" + DDescriptionEN + '\'' +
+                ", EPCS='" + EPCS + '\'' +
+                ", FPKGWAY='" + FPKGWAY + '\'' +
+                ", GGW='" + GGW + '\'' +
+                ", HNW='" + HNW + '\'' +
+                ", IL='" + IL + '\'' +
+                ", JW='" + JW + '\'' +
+                ", KH='" + KH + '\'' +
+                ", LVOL='" + LVOL + '\'' +
+                ", MPONO='" + MPONO + '\'' +
+                ", NOrigin='" + NOrigin + '\'' +
+                ", OSupplier='" + OSupplier + '\'' +
+                ", PHSCODE='" + PHSCODE + '\'' +
+                ", QTotalPrice='" + QTotalPrice + '\'' +
+                ", RCurrency='" + RCurrency + '\'' +
                 '}';
     }
 }
