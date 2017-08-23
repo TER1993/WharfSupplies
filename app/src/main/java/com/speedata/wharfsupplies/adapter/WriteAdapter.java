@@ -26,10 +26,10 @@ public class WriteAdapter extends CommonRvAdapter<BaseInfor> {
 
     @Override
     public void convert(BaseAdapterHelper helper, BaseInfor item, int position) {
-        helper.setText(R.id.tv_one_line1, item.getNO());
-        helper.setText(R.id.tv_one_line2, item.getPKGNO());
-        helper.setText(R.id.tv_one_line3, item.getDescriptionCN());
-        helper.setText(R.id.tv_one_line4, item.getDescriptionEN());
+        helper.setText(R.id.tv_one_line1, item.getaNO());
+        helper.setText(R.id.tv_one_line2, item.getbPKGNO());
+        helper.setText(R.id.tv_one_line3, item.getcDescriptionCN());
+        helper.setText(R.id.tv_one_line4, item.getdDescriptionEN());
 
     }
 }

@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.speedata.libuhf.IUHFService;
 import com.speedata.libuhf.bean.Tag_Data;
-import com.speedata.libutils.DataConversionUtils;
 import com.speedata.wharfsupplies.R;
 
 import java.util.ArrayList;

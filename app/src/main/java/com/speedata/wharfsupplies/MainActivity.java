@@ -243,58 +243,58 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void fuzhi(String neirong, int diji) {
         switch (diji) {
             case 0:
-                baseInfor.setNO(neirong);
+                baseInfor.setaNO(neirong);
                 break;
             case 1:
-                baseInfor.setPKGNO(neirong);
+                baseInfor.setbPKGNO(neirong);
                 break;
             case 2:
-                baseInfor.setDescriptionCN(neirong);
+                baseInfor.setcDescriptionCN(neirong);
                 break;
             case 3:
-                baseInfor.setDescriptionEN(neirong);
+                baseInfor.setdDescriptionEN(neirong);
                 break;
             case 4:
-                baseInfor.setPCS(neirong);
+                baseInfor.setePCS(neirong);
                 break;
             case 5:
-                baseInfor.setPKGWAY(neirong);
+                baseInfor.setfPKGWAY(neirong);
                 break;
             case 6:
-                baseInfor.setGW(neirong);
+                baseInfor.setgGW(neirong);
                 break;
             case 7:
-                baseInfor.setNW(neirong);
+                baseInfor.sethNW(neirong);
                 break;
             case 8:
-                baseInfor.setL(neirong);
+                baseInfor.setiL(neirong);
                 break;
             case 9:
-                baseInfor.setW(neirong);
+                baseInfor.setjW(neirong);
                 break;
             case 10:
-                baseInfor.setH(neirong);
+                baseInfor.setkH(neirong);
                 break;
             case 11:
-                baseInfor.setVOL(neirong);
+                baseInfor.setlVOL(neirong);
                 break;
             case 12:
-                baseInfor.setPONO(neirong);
+                baseInfor.setmPONO(neirong);
                 break;
             case 13:
-                baseInfor.setOrigin(neirong);
+                baseInfor.setnOrigin(neirong);
                 break;
             case 14:
-                baseInfor.setSupplier(neirong);
+                baseInfor.setoSupplier(neirong);
                 break;
             case 15:
-                baseInfor.setHSCODE(neirong);
+                baseInfor.setpHSCODE(neirong);
                 break;
             case 16:
-                baseInfor.setTotalPrice(neirong);
+                baseInfor.setqTotalPrice(neirong);
                 break;
             case 17:
-                baseInfor.setCurrency(neirong);
+                baseInfor.setrCurrency(neirong);
                 break;
         }
 
