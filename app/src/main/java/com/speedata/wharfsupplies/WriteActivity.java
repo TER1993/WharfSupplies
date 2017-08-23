@@ -75,18 +75,6 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
         ProgressDialogUtils.dismissProgressDialog();
     }
 
-    @Override
-    protected void onResume() {
-        ProgressDialogUtils.showProgressDialog(mContext, "上电中...");
-        super.onResume();
-        if (iuhfService.OpenDev() == 0) {
-            Toast.makeText(this, "上电成功", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "上电失败", Toast.LENGTH_SHORT).show();
-        }
-        ProgressDialogUtils.dismissProgressDialog();
-    }
-
     private void initView() {
 
         //输入法管理
@@ -370,13 +358,6 @@ public class WriteActivity extends Activity implements View.OnClickListener, Com
         mAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    protected void onStop() {
-        ProgressDialogUtils.showProgressDialog(mContext, "下电中...");
-        super.onStop();
-        iuhfService.CloseDev();
-        ProgressDialogUtils.dismissProgressDialog();
-    }
 
     /**
      * 问题退出时的对话框的按钮点击事件

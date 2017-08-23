@@ -27,13 +27,21 @@ public class CustomerApplication extends Application {
     public void onCreate() {
         super.onCreate();
         iuhfService = UHFManager.getUHFService(this);
+        if (iuhfService.OpenDev() == 0) {
+            Toast.makeText(this, "上电成功", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "上电失败", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
     @Override
     public void onTerminate() {
         super.onTerminate();
+        iuhfService.CloseDev();
     }
+
+
 
     public int getChangeuser() {
         return changeuser;

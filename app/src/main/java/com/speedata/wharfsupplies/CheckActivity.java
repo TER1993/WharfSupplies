@@ -90,15 +90,8 @@ public class CheckActivity extends Activity implements View.OnClickListener {
 
     @Override
     protected void onResume() {
-        ProgressDialogUtils.showProgressDialog(mContext, "上电中...");
         super.onResume();
-        if (iuhfService.OpenDev() == 0) {
-            Toast.makeText(this, "上电成功", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "上电失败", Toast.LENGTH_SHORT).show();
-        }
         iuhfService.SetInvMode(3, 0, 32);
-        ProgressDialogUtils.dismissProgressDialog();
     }
 
 
@@ -248,16 +241,13 @@ public class CheckActivity extends Activity implements View.OnClickListener {
 
     @Override
     protected void onStop() {
-        ProgressDialogUtils.showProgressDialog(mContext, "下电中");
         Log.w("stop", "im stopping");
         if (inSearch) {
             iuhfService.inventory_stop();
             inSearch = false;
         }
         soundPool.release();
-        iuhfService.CloseDev();
         super.onStop();
-        ProgressDialogUtils.dismissProgressDialog();
     }
 
 
